@@ -5,14 +5,14 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.IOException;
 
-//ƒXƒŒƒbƒh•”iŠeƒNƒ‰ƒCƒAƒ“ƒg‚É‰‚¶‚Äj
+//ã‚¹ãƒ¬ãƒƒãƒ‰éƒ¨ï¼ˆå„ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã«å¿œã˜ã¦ï¼‰
 class ClientProcThread extends Thread {
-	private int number;//©•ª‚Ì”Ô†
+	private int number;// è‡ªåˆ†ã®ç•ªå·
 	private Socket incoming;
 	private InputStreamReader myIsr;
 	private BufferedReader myIn;
 	private PrintWriter myOut;
-	private String myName;//Ú‘±Ò‚Ì–¼‘O
+	private String myName;// æ¥ç¶šè€…ã®åå‰
 
 	public ClientProcThread(int n, Socket i, InputStreamReader isr, BufferedReader in, PrintWriter out) {
 		number = n;
@@ -24,89 +24,89 @@ class ClientProcThread extends Thread {
 
 	public void run() {
 		try {
-			myOut.println(number);//‰‰ñ‚¾‚¯ŒÄ‚Î‚ê‚é
-			
-			myName = myIn.readLine();//‰‚ß‚ÄÚ‘±‚µ‚½‚Æ‚«‚Ìˆês–Ú‚Í–¼‘O
+			myOut.println(number);// åˆå›ã ã‘å‘¼ã°ã‚Œã‚‹
 
-			while (true) {//–³ŒÀƒ‹[ƒv‚ÅCƒ\ƒPƒbƒg‚Ö‚Ì“ü—Í‚ğŠÄ‹‚·‚é
+			myName = myIn.readLine();// åˆã‚ã¦æ¥ç¶šã—ãŸã¨ãã®ä¸€è¡Œç›®ã¯åå‰
+
+			while (true) {// ç„¡é™ãƒ«ãƒ¼ãƒ—ã§ï¼Œã‚½ã‚±ãƒƒãƒˆã¸ã®å…¥åŠ›ã‚’ç›£è¦–ã™ã‚‹
 				String str = myIn.readLine();
-				System.out.println("Received from client No."+number+"("+myName+"), Messages: "+str);
-				if (str != null) {//‚±‚Ìƒ\ƒPƒbƒgiƒoƒbƒtƒ@j‚É“ü—Í‚ª‚ ‚é‚©‚ğƒ`ƒFƒbƒN
+				System.out.println("Received from client No." + number + "(" + myName + "), Messages: " + str);
+				if (str != null) {// ã“ã®ã‚½ã‚±ãƒƒãƒˆï¼ˆãƒãƒƒãƒ•ã‚¡ï¼‰ã«å…¥åŠ›ãŒã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 					if (str.toUpperCase().equals("BYE")) {
 						myOut.println("Good bye!");
 						break;
 					}
-					MyServer2.SendAll(str, myName);//ƒT[ƒo‚É—ˆ‚½ƒƒbƒZ[ƒW‚ÍÚ‘±‚µ‚Ä‚¢‚éƒNƒ‰ƒCƒAƒ“ƒg‘Sˆõ‚É”z‚é
+					MyServer2.SendAll(str, myName);// ã‚µãƒ¼ãƒã«æ¥ãŸãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯æ¥ç¶šã—ã¦ã„ã‚‹ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆå…¨å“¡ã«é…ã‚‹
 				}
 			}
 		} catch (Exception e) {
-			//‚±‚±‚ÉƒvƒƒOƒ‰ƒ€‚ª“’B‚·‚é‚Æ‚«‚ÍCÚ‘±‚ªØ‚ê‚½‚Æ‚«
-			System.out.println("Disconnect from client No."+number+"("+myName+")");
-			MyServer2.SetFlag(number, false);//Ú‘±‚ªØ‚ê‚½‚Ì‚Åƒtƒ‰ƒO‚ğ‰º‚°‚é
+			// ã“ã“ã«ãƒ—ãƒ­ã‚°ãƒ©ãƒ ãŒåˆ°é”ã™ã‚‹ã¨ãã¯ï¼Œæ¥ç¶šãŒåˆ‡ã‚ŒãŸã¨ã
+			System.out.println("Disconnect from client No." + number + "(" + myName + ")");
+			MyServer2.SetFlag(number, false);// æ¥ç¶šãŒåˆ‡ã‚ŒãŸã®ã§ãƒ•ãƒ©ã‚°ã‚’ä¸‹ã’ã‚‹
 		}
 	}
 }
 
-class MyServer2{
-	
-	private static int maxConnection=100;//Å‘åÚ‘±”
-	private static Socket[] incoming;//ó•t—p‚Ìƒ\ƒPƒbƒg
-	private static boolean[] flag;//Ú‘±’†‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
-	private static InputStreamReader[] isr;//“ü—ÍƒXƒgƒŠ[ƒ€—p‚Ì”z—ñ
-	private static BufferedReader[] in;//ƒoƒbƒtƒ@ƒŠƒ“ƒO‚ğ‚É‚æ‚èƒeƒLƒXƒg“Ç‚İ‚İ—p‚Ì”z—ñ
-	private static PrintWriter[] out;//o—ÍƒXƒgƒŠ[ƒ€—p‚Ì”z—ñ
-	private static ClientProcThread[] myClientProcThread;//ƒXƒŒƒbƒh—p‚Ì”z—ñ
-	private static int member;//Ú‘±‚µ‚Ä‚¢‚éƒƒ“ƒo[‚Ì”
+class MyServer2 {
 
-	//‘Sˆõ‚ÉƒƒbƒZ[ƒW‚ğ‘—‚é
-	public static void SendAll(String str, String myName){
-		//‘—‚ç‚ê‚½—ˆ‚½ƒƒbƒZ[ƒW‚ğÚ‘±‚µ‚Ä‚¢‚é‘Sˆõ‚É”z‚é
-		for(int i=1;i<=member;i++){
-			if(flag[i] == true){
+	private static int maxConnection = 100;// æœ€å¤§æ¥ç¶šæ•°
+	private static Socket[] incoming;// å—ä»˜ç”¨ã®ã‚½ã‚±ãƒƒãƒˆ
+	private static boolean[] flag;// æ¥ç¶šä¸­ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
+	private static InputStreamReader[] isr;// å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ç”¨ã®é…åˆ—
+	private static BufferedReader[] in;// ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°ã‚’ã«ã‚ˆã‚Šãƒ†ã‚­ã‚¹ãƒˆèª­ã¿è¾¼ã¿ç”¨ã®é…åˆ—
+	private static PrintWriter[] out;// å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ç”¨ã®é…åˆ—
+	private static ClientProcThread[] myClientProcThread;// ã‚¹ãƒ¬ãƒƒãƒ‰ç”¨ã®é…åˆ—
+	private static int member;// æ¥ç¶šã—ã¦ã„ã‚‹ãƒ¡ãƒ³ãƒãƒ¼ã®æ•°
+
+	// å…¨å“¡ã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€ã‚‹
+	public static void SendAll(String str, String myName) {
+		// é€ã‚‰ã‚ŒãŸæ¥ãŸãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ¥ç¶šã—ã¦ã„ã‚‹å…¨å“¡ã«é…ã‚‹
+		for (int i = 1; i <= member; i++) {
+			if (flag[i] == true) {
 				out[i].println(str);
-				out[i].flush();//ƒoƒbƒtƒ@‚ğ‚Í‚«o‚·„ƒoƒbƒtƒ@‚É‚ ‚é‘S‚Ä‚Ìƒf[ƒ^‚ğ‚·‚®‚É‘—M‚·‚é
-				System.out.println("Send messages to client No."+i);
+				out[i].flush();// ãƒãƒƒãƒ•ã‚¡ã‚’ã¯ãå‡ºã™ï¼ï¼ãƒãƒƒãƒ•ã‚¡ã«ã‚ã‚‹å…¨ã¦ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã™ãã«é€ä¿¡ã™ã‚‹
+				System.out.println("Send messages to client No." + i);
 			}
-		}	
+		}
 	}
-	
-	//ƒtƒ‰ƒO‚Ìİ’è‚ğs‚¤
-	public static void SetFlag(int n, boolean value){
+
+	// ãƒ•ãƒ©ã‚°ã®è¨­å®šã‚’è¡Œã†
+	public static void SetFlag(int n, boolean value) {
 		flag[n] = value;
 	}
-	
-	//mainƒvƒƒOƒ‰ƒ€
+
+	// mainãƒ—ãƒ­ã‚°ãƒ©ãƒ 
 	public static void main(String[] args) {
-		//•K—v‚È”z—ñ‚ğŠm•Û‚·‚é
+		// å¿…è¦ãªé…åˆ—ã‚’ç¢ºä¿ã™ã‚‹
 		incoming = new Socket[maxConnection];
 		flag = new boolean[maxConnection];
 		isr = new InputStreamReader[maxConnection];
 		in = new BufferedReader[maxConnection];
 		out = new PrintWriter[maxConnection];
 		myClientProcThread = new ClientProcThread[maxConnection];
-		
+
 		int n = 1;
-		member = 0;//’N‚àÚ‘±‚µ‚Ä‚¢‚È‚¢‚Ì‚Åƒƒ“ƒo[”‚Í‚O
+		member = 0;// èª°ã‚‚æ¥ç¶šã—ã¦ã„ãªã„ã®ã§ãƒ¡ãƒ³ãƒãƒ¼æ•°ã¯ï¼
 
 		try {
 			System.out.println("The server has launched!");
-			ServerSocket server = new ServerSocket(10000);//10000”Ôƒ|[ƒg‚ğ—˜—p‚·‚é
+			ServerSocket server = new ServerSocket(10000);// 10000ç•ªãƒãƒ¼ãƒˆã‚’åˆ©ç”¨ã™ã‚‹
 			while (true) {
 				incoming[n] = server.accept();
 				flag[n] = true;
 				System.out.println("Accept client No." + n);
-				//•K—v‚È“üo—ÍƒXƒgƒŠ[ƒ€‚ğì¬‚·‚é
+				// å¿…è¦ãªå…¥å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ä½œæˆã™ã‚‹
 				isr[n] = new InputStreamReader(incoming[n].getInputStream());
 				in[n] = new BufferedReader(isr[n]);
 				out[n] = new PrintWriter(incoming[n].getOutputStream(), true);
-				
-				myClientProcThread[n] = new ClientProcThread(n, incoming[n], isr[n], in[n], out[n]);//•K—v‚Èƒpƒ‰ƒ[ƒ^‚ğ“n‚µƒXƒŒƒbƒh‚ğì¬
-				myClientProcThread[n] .start();//ƒXƒŒƒbƒh‚ğŠJn‚·‚é
-				member = n;//ƒƒ“ƒo[‚Ì”‚ğXV‚·‚é
+
+				myClientProcThread[n] = new ClientProcThread(n, incoming[n], isr[n], in[n], out[n]);// å¿…è¦ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’ä½œæˆ
+				myClientProcThread[n].start();// ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’é–‹å§‹ã™ã‚‹
+				member = n;// ãƒ¡ãƒ³ãƒãƒ¼ã®æ•°ã‚’æ›´æ–°ã™ã‚‹
 				n++;
 			}
 		} catch (Exception e) {
-			System.err.println("ƒ\ƒPƒbƒgì¬‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: " + e);
+			System.err.println("ã‚½ã‚±ãƒƒãƒˆä½œæˆæ™‚ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: " + e);
 		}
 	}
 }
