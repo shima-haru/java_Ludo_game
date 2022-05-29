@@ -1,7 +1,7 @@
 # 2人用オンライン対戦すごろくボードゲーム「ルドー」
 
 ### 実行方法
-1. ユーザ１：```javac MyServer.java```
+1. ユーザ１：```javac MyServer2.java```
 2. ユーザ１：```javac MyClient.java```
 3. ユーザ１：```ipconfig```でユーザ１のIPアドレスをメモっておく
 4. ユーザ１：```java MyServer```
